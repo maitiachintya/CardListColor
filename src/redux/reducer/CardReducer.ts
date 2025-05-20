@@ -1,9 +1,10 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import {createSlice, PayloadAction} from '@reduxjs/toolkit';
 
 interface CardItem {
   title: string;
   description: string;
   color: string;
+  index?: number;
 }
 
 interface CardState {
@@ -35,13 +36,26 @@ const cardReducer = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
+    updateCard(state, action: PayloadAction<CardItem>) {
+      const idx = action.payload.index;
+      if (idx === undefined || idx < 0 || idx >= state.cards.length) {
+        state.error = `Invalid card index ${idx}`;
+        return;
+      }
+      state.cards[idx] = {
+        title: action.payload.title,
+        description: action.payload.description,
+        color: action.payload.color,
+      };
+      state.error = null;
+    },
+    deleteCard(state, action: PayloadAction<number>) {
+      state.cards.splice(action.payload, 1);
+    },
   },
 });
 
-export const {
-  addCardRequest,
-  addCardSuccess,
-  addCardFailure,
-} = cardReducer.actions;
+export const {addCardRequest, addCardSuccess, addCardFailure, updateCard, deleteCard} =
+  cardReducer.actions;
 
 export default cardReducer.reducer;
