@@ -1,3 +1,18 @@
+export const URL = {
+  BASE_URL: 'https://dummyjson.com',
+  BUCKET_URL: 'https://picsum.photos',
+};
+
+export const API = {
+  auth: {
+    login: 'auth/login',
+    refreshToken: 'auth/refresh',
+  },
+  user: {
+    profile: 'auth/me'
+  }
+}
+
 export const colorCodes = [
   '#FF5733', // reddish orange
   '#33B5E5', // blue

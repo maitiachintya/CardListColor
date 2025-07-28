@@ -20,13 +20,14 @@ import showMessage from '../../utils/helper/showMessage';
 import {
   addCardRequest,
   deleteCard,
-  updateCard,
+  updateCardRequest,
+  updateCardSuccess,
 } from '../../redux/reducer/CardReducer';
 import {useAppDispatch, useAppSelector} from '../../redux/store/Store';
 import {Fonts} from '../../themes/Fonts';
 import {Icons} from '../../themes/Icons';
 import {Colors} from '../../themes/Colors';
-import { colorCodes } from '../../utils/constant';
+import {colorCodes} from '../../utils/constant';
 
 const Home = () => {
   const dispatch = useAppDispatch();
@@ -107,7 +108,7 @@ const Home = () => {
       showMessage('Invalid card selection');
     } else {
       dispatch(
-        updateCard({
+        updateCardRequest({
           title: editTitle,
           description: editDescription,
           color: colorCodes[editSelectedIndex],
@@ -125,7 +126,7 @@ const Home = () => {
 
   return (
     <SafeAreaView style={styles.container}>
-      <StatusBar backgroundColor={'yellow'} barStyle={'dark-content'} />
+      <StatusBar barStyle={'dark-content'} />
       <View style={styles.header}>
         <Text style={styles.headerTitle}>Card Lists</Text>
       </View>
@@ -141,16 +142,24 @@ const Home = () => {
           <TouchableOpacity
             onPress={() => openEditModal(index)}
             style={[styles.card, {backgroundColor: item.color}]}>
-            <Text style={styles.cardTitle}>{item.title}</Text>
-            <Text style={styles.cardDescription}>{item.description}</Text>
-            {/* Long press delete button */}
-            <TouchableOpacity
-              onLongPress={() => {
-                setShowDeleteModal(true);
-                setCardToDeleteIndex(index);
+            <View
+              style={{
+                flexDirection: 'row',
+                justifyContent: 'space-between',
+                height: 60,
+                width: '90%',
               }}>
-              <Image source={Icons.delete} style={styles.deleteIcon} />
-            </TouchableOpacity>
+              <Text style={styles.cardTitle}>{item.title}</Text>
+              {/* Long press delete button */}
+              <TouchableOpacity
+                onLongPress={() => {
+                  setShowDeleteModal(true);
+                  setCardToDeleteIndex(index);
+                }}>
+                <Image source={Icons.delete} style={styles.deleteIcon} />
+              </TouchableOpacity>
+            </View>
+            <Text style={styles.cardDescription}>{item.description}</Text>
           </TouchableOpacity>
         )}
       />
@@ -388,18 +397,26 @@ const styles = StyleSheet.create({
   container: {
     height: '100%',
     width: '100%',
-    backgroundColor: 'yellow',
+    backgroundColor: Colors.white,
   },
   header: {
     height: 60,
     width: '100%',
-    backgroundColor: 'red',
+    backgroundColor: Colors.white,
     justifyContent: 'center',
+    shadowColor: Colors.whiteGrey,
+    shadowOffset: {
+      width: 0,
+      height: 15,
+    },
+    shadowOpacity: 1,
+    elevation: 4,
+    shadowRadius: 10,
   },
   headerTitle: {
     fontFamily: Fonts.Poppins_Bold,
     fontSize: 25,
-    color: 'white',
+    color: Colors.black,
     textAlign: 'center',
   },
   touch: {
@@ -551,8 +568,10 @@ const styles = StyleSheet.create({
   },
   deleteIcon: {
     resizeMode: 'contain',
-    width: 14,
-    height: 14,
+    width: 16,
+    height: 16,
+    marginLeft: 1,
+    marginTop: 5,
     tintColor: Colors.black,
   },
   deleteOverlay: {

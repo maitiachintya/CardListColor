@@ -9,10 +9,17 @@ import {
 } from 'react-native';
 import showMessage from '../../utils/helper/showMessage';
 import {navigate} from '../../navigators/RootNavigation';
+import {useAppDispatch, useAppSelector} from '../../redux/store/Store';
+import {signInRequest} from '../../redux/reducer/AuthReducer';
+import Loader from '../../utils/helper/Loader';
+import { useIsFocused } from '@react-navigation/native';
 
 const LoginScreen = () => {
-  const [username, setUsername] = useState('');
-  const [password, setPassword] = useState('');
+  const dispatch = useAppDispatch();
+  const isFocused = useIsFocused()
+  const {loading, error} = useAppSelector(state => state.auth);
+  const [username, setUsername] = useState('emilys');
+  const [password, setPassword] = useState('emilyspass');
 
   const validate = () => {
     if (!username.trim()) {
@@ -28,41 +35,57 @@ const LoginScreen = () => {
     return true;
   };
 
-  const handleLogin = () => {
+  async function handleLogin() {
     if (validate()) {
-      // Placeholder for login logic (API call)
-      Alert.alert('Login Successful', `Welcome, ${username}!`);
+      try {
+        dispatch(
+          signInRequest({
+            username: username.toLowerCase(),
+            password: password,
+            expiresInMins: 1,
+          }),
+        );
+        // showMessage(result?.message);
+      } catch (error) {
+        console.log('Error in handleSignIn:', error);
+      }
     }
-  };
+  }
 
   return (
-    <View style={styles.container}>
-      <Text style={styles.title}>Login</Text>
+    <View
+      style={{
+        flex: 1,
+      }}>
+      <Loader visible={loading && isFocused} />
+      <View style={styles.container}>
+        <Text style={styles.title}>Login</Text>
 
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        value={username}
-        onChangeText={text => setUsername(text)}
-      />
+        <TextInput
+          style={styles.input}
+          placeholder="Username"
+          value={username}
+          onChangeText={text => setUsername(text)}
+        />
 
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry
-        value={password}
-        onChangeText={text => setPassword(text)}
-      />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          secureTextEntry
+          value={password}
+          onChangeText={text => setPassword(text)}
+        />
 
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
-
-      <View style={styles.signupContainer}>
-        <Text style={styles.signupText}>Don't have an account?</Text>
-        <TouchableOpacity onPress={() => navigate('SignUp')}>
-          <Text style={styles.signupLink}>Sign up</Text>
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Login</Text>
         </TouchableOpacity>
+
+        <View style={styles.signupContainer}>
+          <Text style={styles.signupText}>Don't have an account?</Text>
+          <TouchableOpacity onPress={() => navigate('SignUp')}>
+            <Text style={styles.signupLink}>Sign up</Text>
+          </TouchableOpacity>
+        </View>
       </View>
     </View>
   );
@@ -74,8 +97,8 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    paddingHorizontal: 30,
     backgroundColor: '#f0f8ff',
+    paddingHorizontal: 30,
   },
   title: {
     fontSize: 28,

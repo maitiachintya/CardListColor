@@ -10,14 +10,13 @@ import {RootAuthStackParamList, RootMainStackParamList} from '../types';
 import {navigationRef} from './RootNavigation';
 import login from '../screens/auth/login';
 import signup from '../screens/auth/signup';
-import Home from '../screens/main/Home';
-import List from '../screens/main/List';
 import {useAppSelector} from '../redux/store/Store';
-
+import Splash from '../screens/auth/Splash';
+import TabNavigation from '../navigators/TabNavigation';
 const Stack = createStackNavigator<RootMainStackParamList>();
 
 const StackNavigation = () => {
-  const _token = useAppSelector(state => state.auth.token);
+  const {token, splashLoading} = useAppSelector(state => state.auth);
 
   const theme: Theme = {
     ...DefaultTheme,
@@ -37,11 +36,14 @@ const StackNavigation = () => {
   const MainScreens: {
     [key in keyof RootMainStackParamList]: React.ComponentType<any>;
   } = {
-    Dashboard: Home,
-    List: List,
+    TabNavigation: TabNavigation,
   };
 
-  const screens = _token ? MainScreens : AuthScreens;
+  if (splashLoading) {
+    return <Splash />;
+  }
+
+  const screens = token ? MainScreens : AuthScreens;
 
   return (
     <NavigationContainer theme={theme} ref={navigationRef}>

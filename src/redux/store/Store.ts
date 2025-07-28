@@ -1,9 +1,9 @@
 import {combineReducers, configureStore} from '@reduxjs/toolkit';
 import cardReducer from '../reducer/CardReducer'; // your card reducer import
-import AuthReducer from '../reducer/AuthReducer'; // your card reducer import
+import AuthReducer from '../reducer/AuthReducer'; // your auth reducer import
 import {TypedUseSelectorHook, useDispatch, useSelector} from 'react-redux';
 import {logger} from 'redux-logger';
-import rootSaga from '../redux-saga/CardSaga';
+import rootSaga from '../redux-saga/rootSaga';
 const createSagaMiddleware = require('redux-saga').default;
 
 // Combine reducers (only cardReducer here)

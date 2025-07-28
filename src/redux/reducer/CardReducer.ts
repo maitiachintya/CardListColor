@@ -36,18 +36,21 @@ const cardReducer = createSlice({
       state.loading = false;
       state.error = action.payload;
     },
-    updateCard(state, action: PayloadAction<CardItem>) {
-      const idx = action.payload.index;
-      if (idx === undefined || idx < 0 || idx >= state.cards.length) {
-        state.error = `Invalid card index ${idx}`;
-        return;
-      }
-      state.cards[idx] = {
-        title: action.payload.title,
-        description: action.payload.description,
-        color: action.payload.color,
-      };
+    updateCardRequest(state, action: PayloadAction<CardItem>) {
+      state.loading = true;
       state.error = null;
+    },
+    updateCardSuccess(state, action: PayloadAction<CardItem>) {
+      const {index, title, description, color} = action.payload;
+      if (index !== undefined) {
+        state.cards[index] = {title, description, color};
+        state.error = null;
+        state.loading = false;
+      }
+    },
+    updateCardFailure(state, action: PayloadAction<string>) {
+      state.loading = false;
+      state.error = action.payload;
     },
     deleteCard(state, action: PayloadAction<number>) {
       state.cards.splice(action.payload, 1);
@@ -55,7 +58,14 @@ const cardReducer = createSlice({
   },
 });
 
-export const {addCardRequest, addCardSuccess, addCardFailure, updateCard, deleteCard} =
-  cardReducer.actions;
+export const {
+  addCardRequest,
+  addCardSuccess,
+  addCardFailure,
+  updateCardRequest,
+  updateCardSuccess,
+  updateCardFailure,
+  deleteCard,
+} = cardReducer.actions;
 
 export default cardReducer.reducer;
